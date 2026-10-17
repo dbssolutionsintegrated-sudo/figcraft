@@ -36,8 +36,15 @@ jobs:
           curl -sSfL "https://github.com/trunk-rs/trunk/releases/download/${V}/trunk-aarch64-unknown-linux-gnu.tar.gz" | tar -xzf - -C /usr/local/bin
           trunk --version
 
+      # Debian's binaryen is too old for data-wasm-opt-params in index.html
+      # (--enable-bulk-memory-opt landed in a later release), so take upstream's.
       - name: binaryen
-        run: sudo apt-get update && sudo apt-get install -y binaryen
+        run: |
+          set -euo pipefail
+          V=version_133
+          curl -sSfL "https://github.com/WebAssembly/binaryen/releases/download/${V}/binaryen-${V}-aarch64-linux.tar.gz" | sudo tar -xzf - -C /opt
+          sudo ln -sf "/opt/binaryen-${V}/bin/wasm-opt" /usr/local/bin/wasm-opt
+          wasm-opt --version
 
       - name: build
         run: cd apps/figcraft-web && trunk build --release
