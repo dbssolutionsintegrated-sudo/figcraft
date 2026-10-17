@@ -16,8 +16,8 @@ permissions:
 
 jobs:
   build:
-    # the panel host is arm64; build natively so nothing is emulated
-    runs-on: ubuntu-24.04-arm
+    # the panel host is amd64 (verified: arm64 images exit 255 on it)
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -42,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           V=version_133
-          curl -sSfL "https://github.com/WebAssembly/binaryen/releases/download/${V}/binaryen-${V}-aarch64-linux.tar.gz" | sudo tar -xzf - -C /opt
+          curl -sSfL "https://github.com/WebAssembly/binaryen/releases/download/${V}/binaryen-${V}-x86_64-linux.tar.gz" | sudo tar -xzf - -C /opt
           sudo ln -sf "/opt/binaryen-${V}/bin/wasm-opt" /usr/local/bin/wasm-opt
           wasm-opt --version
 
